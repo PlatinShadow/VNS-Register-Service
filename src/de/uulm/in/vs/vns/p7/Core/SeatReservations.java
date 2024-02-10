@@ -27,12 +27,13 @@ public class SeatReservations {
             for(int j = 0; j < 10; j++){
                 listofSeats.append(indexToString(i,j));
                 if(seats[i][j] == Status.RESERVED || seats[i][j] == Status.TAKEN){
-                    listofSeats.append()
+                    listofSeats.append(Status.TAKEN);
                 }else {
-
+                    listofSeats.append(Status.TAKEN + ",");
                 }
             }
         }
+        return listofSeats.toString() + "\r\n";
     }
 
     public String indexToString(int x, int y){
