@@ -16,6 +16,8 @@ public class Server {
 
     private final SeatReservations reservation_service;
 
+    private long counter = 0;
+
     /**
      * Initializes the socket server
      * @throws IOException
@@ -32,20 +34,12 @@ public class Server {
      * @throws IOException
      */
     public void run() throws IOException {
-        // Check timeouts
-        thread_pool.execute(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
-
+        System.out.println("Server running on port 9876");
         // Listen for clients
         while(true) {
             Socket client = socket.accept();
             System.out.println("New Client: " + client.getInetAddress());
-
-            thread_pool.execute(new MessageParser(client, reservation_service));
+            thread_pool.execute(new MessageParser(client, reservation_service, counter++));
         }
     }
 

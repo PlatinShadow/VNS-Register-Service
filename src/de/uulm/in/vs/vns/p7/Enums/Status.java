@@ -4,4 +4,4 @@ public enum Status{
     TAKEN,
     RESERVED,
     FREE
-        }
+}

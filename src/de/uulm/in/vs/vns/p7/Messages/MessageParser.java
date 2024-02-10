@@ -12,15 +12,16 @@ public class MessageParser implements Runnable {
 
     private final SeatReservations service;
 
-    private String reserved_seat = "";
+    private final long id;
 
     /**
      * Constructor of Message Handler
      * @param socket Client socker from ServerSocket.accept
      */
-    public MessageParser(Socket socket, SeatReservations service) {
+    public MessageParser(Socket socket, SeatReservations service, long id) {
         this.socket = socket;
         this.service = service;
+        this.id = id;
     }
 
     /**
@@ -46,7 +47,7 @@ public class MessageParser implements Runnable {
                 writer.flush();
             }
         } catch (Exception e) {
-
+            System.out.println(e.getMessage());
         }
     }
 
@@ -63,7 +64,7 @@ public class MessageParser implements Runnable {
             case "RESERVE" -> on_reserve(parts[1]);
             case "BOOK" -> on_book(parts[1]);
             case "ABORT" -> on_abort();
-            default -> "INVALID_REQUEST";
+            default -> "FAIL";
         };
     }
 
@@ -84,11 +85,7 @@ public class MessageParser implements Runnable {
     private String on_reserve(String seat) {
         log("RESERVE " + seat);
 
-        if(!reserved_seat.equals("")) {
-            return "FAIL";
-        }
-
-        if(service.reserveSeat(seat)) {
+        if(service.reserveSeat(seat, id)) {
             return "RESERVED";
         } else {
             return "FAIL";
@@ -103,15 +100,9 @@ public class MessageParser implements Runnable {
     private String on_book(String seat){
         log("BOOK" + seat);
 
-        if(!reserved_seat.equals(seat)) {
-            return "FAIL";
-        }
-
-        if(service.bookSeat(seat)) {
-            reserved_seat = "";
+        if(service.bookSeat(seat,id)) {
             return "BOOKED";
         } else {
-            reserved_seat = "";
             return "FAIL";
         }
 
@@ -123,15 +114,12 @@ public class MessageParser implements Runnable {
      */
     private String on_abort(){
         log("ABORT");
-
-        reserved_seat = "";
-        service.freeSeat(reserved_seat);
-
+        service.clearReservations(id);
         return "ABORTED";
     }
 
     private void log(String msg) {
-        System.out.println("[" + socket.getInetAddress() + "]: " + msg);
+        System.out.println("[" + socket.getInetAddress() + " | " + id + "]: " + msg);
     }
 
 }
