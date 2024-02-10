@@ -22,12 +22,14 @@ public class MessageParser implements Runnable {
                     new OutputStreamWriter(socket.getOutputStream())
             );
 
-
             while(true) {
                 String request = reader.readLine();
-                parse(request);
-            }
+                String response = (String)parse(request);
 
+                writer.write(response);
+                writer.write("\r\n");
+                writer.flush();
+            }
         } catch (Exception e) {
 
         }
