@@ -111,8 +111,10 @@ public class MessageParser implements Runnable {
             reserved_seat = "";
             return "BOOKED";
         } else {
+            reserved_seat = "";
             return "FAIL";
         }
+
     }
 
     /**
