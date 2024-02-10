@@ -1,5 +1,7 @@
 package de.uulm.in.vs.vns.p7.Messages;
 
+import de.uulm.in.vs.vns.p7.Core.SeatReservations;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -8,12 +10,17 @@ public class MessageParser implements Runnable {
 
     private final Socket socket;
 
+    private final SeatReservations service;
+
+    private String reserved_seat = "";
+
     /**
      * Constructor of Message Handler
      * @param socket Client socker from ServerSocket.accept
      */
-    public MessageParser(Socket socket) {
+    public MessageParser(Socket socket, SeatReservations service) {
         this.socket = socket;
+        this.service = service;
     }
 
     /**
@@ -66,7 +73,7 @@ public class MessageParser implements Runnable {
      */
     private String on_list(){
         log("LIST");
-        return null;
+        return service.toString();
     }
 
     /**
@@ -76,7 +83,16 @@ public class MessageParser implements Runnable {
      */
     private String on_reserve(String seat) {
         log("RESERVE " + seat);
-        return null;
+
+        if(!reserved_seat.equals("")) {
+            return "FAIL";
+        }
+
+        if(service.reserveSeat(seat)) {
+            return "RESERVED";
+        } else {
+            return "FAIL";
+        }
     }
 
     /**
@@ -86,7 +102,17 @@ public class MessageParser implements Runnable {
      */
     private String on_book(String seat){
         log("BOOK" + seat);
-        return null;
+
+        if(!reserved_seat.equals(seat)) {
+            return "FAIL";
+        }
+
+        if(service.bookSeat(seat)) {
+            reserved_seat = "";
+            return "BOOKED";
+        } else {
+            return "FAIL";
+        }
     }
 
     /**
@@ -95,6 +121,10 @@ public class MessageParser implements Runnable {
      */
     private String on_abort(){
         log("ABORT");
+
+        reserved_seat = "";
+        service.freeSeat(reserved_seat);
+
         return "ABORTED";
     }
 
