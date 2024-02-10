@@ -44,9 +44,9 @@ public class MessageParser implements Runnable {
     }
 
     /**
-     * P
-     * @param rawMessage
-     * @return
+     * Parses and handels a message
+     * @param rawMessage Message to parse
+     * @return response to message
      */
     public String parse(String rawMessage) {
         var parts = rawMessage.split(" ");
@@ -60,24 +60,42 @@ public class MessageParser implements Runnable {
         };
     }
 
+    /**
+     * LIST
+     * @return list of seats
+     */
     private String on_list(){
         log("LIST");
         return null;
     }
 
+    /**
+     * RESERVE <SEAT>
+     * @param seat seat to reserve
+     * @return FAILED or RESERVED
+     */
     private String on_reserve(String seat) {
         log("RESERVE " + seat);
         return null;
     }
 
+    /**
+     * BOOK <SEAT>
+     * @param seat seat to book
+     * @return FAILED or BOOKED
+     */
     private String on_book(String seat){
         log("BOOK" + seat);
         return null;
     }
 
+    /**
+     * ABORT
+     * @return ABORTED
+     */
     private String on_abort(){
         log("ABORT");
-        return null;
+        return "ABORTED";
     }
 
     private void log(String msg) {
