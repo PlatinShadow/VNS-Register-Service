@@ -10,19 +10,38 @@ import java.util.concurrent.Executors;
 
 public class Server {
 
-    private ServerSocket socket;
+    private final ServerSocket socket;
 
-    private ExecutorService thread_pool;
+    private final ExecutorService thread_pool;
 
-
+    /**
+     * Initializes the socket server
+     * @throws IOException
+     */
     public Server() throws IOException {
         socket = new ServerSocket(9876);
         thread_pool = Executors.newCachedThreadPool();
     }
 
+    /**
+     * Runs the service and accepts new clients
+     * This is a blocking call
+     * @throws IOException
+     */
     public void run() throws IOException {
+        // Check timeouts
+        thread_pool.execute(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+
+        // Listen for clients
         while(true) {
             Socket client = socket.accept();
+            System.out.println("New Client: " + client.getInetAddress());
+
             thread_pool.execute(new MessageParser(client));
         }
     }
