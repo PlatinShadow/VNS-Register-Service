@@ -20,6 +20,21 @@ public class SeatReservations {
         }
     }
 
+    @Override
+    public String toString(){
+        StringBuilder listofSeats = new StringBuilder("(");
+        for(int i = 0; i < 10; i++){
+            for(int j = 0; j < 10; j++){
+                listofSeats.append(indexToString(i,j));
+                if(seats[i][j] == Status.RESERVED || seats[i][j] == Status.TAKEN){
+                    listofSeats.append()
+                }else {
+
+                }
+            }
+        }
+    }
+
     public String indexToString(int x, int y){
         return (char)(x+65) + Integer.toString(y);
     }
@@ -38,7 +53,7 @@ public class SeatReservations {
 
     public synchronized boolean reserveSeat(String seat){
         int[] index = seatStringToIndex(seat);
-        if(index[0] >= 10 || index[1] >= 10)throw new RuntimeException("Index out of Bounds");
+        if(index[0] >= 10 || index[1] >= 10)return false;
         if(seats[index[0]][index[1]] != Status.FREE)return false;
         seats[index[0]][index[1]] = Status.RESERVED;
         return true;
@@ -46,7 +61,15 @@ public class SeatReservations {
 
     public synchronized  boolean bookSeat(String seat){
         int[] index = seatStringToIndex(seat);
-        if(index[0] >= 10 || index[1] >= 10)throw new RuntimeException("Index out of Bounds");
+        if(index[0] >= 10 || index[1] >= 10)return false;
+        if(seats[index[0]][index[1]] != Status.RESERVED)return false;
+        seats[index[0]][index[1]] = Status.TAKEN;
+        return true;
+    }
+
+    public synchronized boolean freeSeat(String seat){
+        int[] index = seatStringToIndex(seat);
+        if(index[0] >= 10 || index[1] >= 10)return false;
         if(seats[index[0]][index[1]] != Status.RESERVED)return false;
         seats[index[0]][index[1]] = Status.TAKEN;
         return true;
